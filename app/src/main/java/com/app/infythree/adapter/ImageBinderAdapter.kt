@@ -1,4 +1,4 @@
-package com.app.infythree.view.adapter
+package com.app.infythree.adapter
 
 import android.R
 import android.util.Log

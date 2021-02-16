@@ -13,7 +13,8 @@ import com.app.infythree.R
 import com.app.infythree.data.model.CountryModel
 import com.app.infythree.databinding.ActivityMainBinding
 import com.app.infythree.utils.Status
-import com.app.infythree.view.adapter.CountryAdapter
+import com.app.infythree.adapter.CountryAdapter
+import com.app.infythree.application.MyApp
 import com.app.infythree.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -31,8 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setUpObserver(){
-
-        mainViewModel.getData().observe(this, Observer {
+        mainViewModel.livedata.observe(this, Observer {
             when(it.status){
                 Status.LOADING->{
                     activityMainBinding.progressBar.visibility = View.VISIBLE
@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setUpViewmodel(){
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        val factory = (this.applicationContext as MyApp).viewModelFactory
+        mainViewModel = ViewModelProviders.of(this,factory).get(MainViewModel::class.java)
     }
 }
