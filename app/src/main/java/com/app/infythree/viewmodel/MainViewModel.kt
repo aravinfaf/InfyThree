@@ -8,14 +8,14 @@ import com.app.infythree.data.model.CountryModel
 import com.app.infythree.utils.Resource.Companion.loading
 import com.app.infytwo.repository.CountryRepo
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-
 
 class MainViewModel(private val repository: CountryRepo) : ViewModel() {
 
     var countrylist  = arrayListOf<CountryModel>()
     var livedata = MutableLiveData<com.app.infythree.utils.Resource<List<CountryModel>>>()
-
+    lateinit var disposabledata : Disposable
     init {
         fetchUsers()
     }
@@ -24,7 +24,7 @@ class MainViewModel(private val repository: CountryRepo) : ViewModel() {
 
         livedata.postValue(loading(null))
 
-        repository.getApiDetails()
+       disposabledata= repository.getApiDetails()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -42,8 +42,9 @@ class MainViewModel(private val repository: CountryRepo) : ViewModel() {
         livedata.postValue(com.app.infythree.utils.Resource.success(this.countrylist))
     }
 
-    fun getData() : LiveData<com.app.infythree.utils.Resource<List<CountryModel>>>{
-        return livedata
+    override fun onCleared() {
+        super.onCleared()
+        disposabledata.dispose()
     }
 }
 
