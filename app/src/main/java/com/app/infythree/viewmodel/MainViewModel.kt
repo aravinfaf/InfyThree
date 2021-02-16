@@ -8,6 +8,8 @@ import com.app.infythree.data.api.ApiService
 import com.app.infythree.data.api.RetrofitBuilder
 import com.app.infythree.data.model.CountryMainModel
 import com.app.infythree.data.model.CountryModel
+import com.app.infythree.utils.Resource
+import com.app.infythree.utils.Resource.Companion.error
 import com.app.infythree.utils.Resource.Companion.loading
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -37,8 +39,8 @@ class MainViewModel : ViewModel() {
             })
     }
 
-    private fun onError(error: Throwable?) {
-        Log.e("EE",error.toString())
+    private fun onError(error: Throwable) {
+        livedata.postValue(error(error.message.toString()))
     }
 
     private fun onResponse(response: CountryMainModel) {
