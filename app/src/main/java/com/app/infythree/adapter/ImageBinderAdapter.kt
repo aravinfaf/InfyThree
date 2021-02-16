@@ -16,16 +16,6 @@ object ImageBinderAdapter {
         @BindingAdapter("android:src")
         fun setImageUrl(view: ImageView, url: String?) {
             if (!url.isNullOrBlank()) {
-
-                Log.e("III",url)
-
-                val options: RequestOptions = RequestOptions()
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_notification_clear_all)
-                    .error(R.drawable.ic_lock_idle_lock)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .priority(Priority.HIGH)
-
                 Glide.with(view.context).load(url).into(view)
             }
     }

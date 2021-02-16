@@ -22,7 +22,7 @@ class MainViewModel(private val repository: CountryRepo) : ViewModel() {
 
     private fun fetchUsers() {
 
-        livedata.postValue(loading(null))
+        livedata.value=(loading(null))
 
        disposabledata= repository.getApiDetails()
             .subscribeOn(Schedulers.io())
@@ -34,12 +34,12 @@ class MainViewModel(private val repository: CountryRepo) : ViewModel() {
     }
 
     private fun onError(error: Throwable) {
-        livedata.postValue(error(error.message.toString()))
+        livedata.value=(error(error.message.toString()))
     }
 
     private fun onResponse(response: CountryMainModel) {
         countrylist = response.rows as ArrayList<CountryModel>
-        livedata.postValue(com.app.infythree.utils.Resource.success(this.countrylist))
+        livedata.value=(com.app.infythree.utils.Resource.success(this.countrylist))
     }
 
     override fun onCleared() {
