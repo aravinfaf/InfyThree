@@ -1,0 +1,73 @@
+package com.app.infythree.view.activity
+
+import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.app.infythree.R
+import com.app.infythree.data.model.CountryModel
+import com.app.infythree.databinding.ActivityMainBinding
+import com.app.infythree.utils.Status
+import com.app.infythree.view.adapter.CountryAdapter
+import com.app.infythree.viewmodel.MainViewModel
+
+class MainActivity : AppCompatActivity() {
+
+    lateinit var activityMainBinding: ActivityMainBinding
+    lateinit var mainViewModel: MainViewModel
+    lateinit var countryAdapter : CountryAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+
+        setUpViewmodel()
+        setUpObserver()
+    }
+
+    fun setUpObserver(){
+
+        mainViewModel.getData().observe(this, Observer {
+            when(it.status){
+                Status.LOADING->{
+                    activityMainBinding.progressBar.visibility = View.VISIBLE
+                    activityMainBinding.countryRecyclerview.visibility = View.GONE
+                }
+
+                Status.SUCCESS->{
+                    activityMainBinding.progressBar.visibility = View.GONE
+                    activityMainBinding.countryRecyclerview.visibility = View.VISIBLE
+                    it.data?.let { it1 -> renderData(it1) }
+                }
+
+                Status.ERROR->{
+                    activityMainBinding.progressBar.visibility = View.GONE
+                    Toast.makeText(applicationContext,it.message,Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+    }
+
+    private fun renderData(data: List<CountryModel>) {
+
+        activityMainBinding.countryRecyclerview.layoutManager = LinearLayoutManager(this)
+        countryAdapter =
+            CountryAdapter(data as ArrayList<CountryModel>)
+        activityMainBinding.countryRecyclerview.addItemDecoration(
+            DividerItemDecoration(
+                activityMainBinding.countryRecyclerview.context,
+                (activityMainBinding.countryRecyclerview.layoutManager as LinearLayoutManager).orientation
+            )
+        )
+        activityMainBinding.countryRecyclerview.adapter = countryAdapter
+    }
+
+    fun setUpViewmodel(){
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+    }
+}
